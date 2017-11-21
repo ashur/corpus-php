@@ -1,6 +1,6 @@
 {
     "name": "ashur/corpus-php",
-    "type": "project",
+    "type": "library",
     "repositories": [
         {
             "type": "vcs",
