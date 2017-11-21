@@ -114,12 +114,136 @@ class CorpusTest extends TestCase
 		$this->assertEquals( $corpusName, $corpus->getName() );
 	}
 
-	public function test_getRandomItem()
+	public function test_getRandomItem_addsItemToHistory()
 	{
-		$items = ['aioli', 'ajvar', 'amba'];
 		$corpusName = 'name-' . microtime( true );
-		$corpus = new Corpus( $corpusName, $items );
+		$corpusItems = ['aioli', 'ajvar', 'amba'];
+		$corpus = new Corpus( $corpusName, $corpusItems );
 
-		$this->assertTrue( in_array( $corpus->getRandomItem(), $items ) );
+		/* One Corpus item remains unused */
+		$historyItems = ['aioli', 'ajvar'];
+		$history = new History( [$corpusName => $historyItems] );
+
+		$this->assertFalse( $history->hasDomainItem( $corpusName, 'amba' ) );
+
+		$randomCorpusItem = $corpus->getRandomItem( $history );
+
+		$this->assertTrue( $history->hasDomainItem( $corpusName, 'amba' ) );
+	}
+
+	public function test_getRandomItem_returnsItemNotFoundInHistory()
+	{
+		$corpusName = 'name-' . microtime( true );
+		$corpusItems = ['aioli', 'ajvar', 'amba'];
+		$corpus = new Corpus( $corpusName, $corpusItems );
+
+		/* One Corpus item remains unused */
+		$historyItems = ['aioli', 'ajvar'];
+		$history = new History( [$corpusName => $historyItems] );
+
+		$randomCorpusItem = $corpus->getRandomItem( $history );
+
+		$this->assertEquals( 'amba', $randomCorpusItem );
+	}
+
+	public function test_getRandomItem_callsHistory_removeDomain_whenExhausted()
+	{
+		$corpusName = 'name-' . microtime( true );
+		$corpusItems = ['aioli', 'ajvar', 'amba'];
+		$corpus = new Corpus( $corpusName, $corpusItems );
+
+		/* Ensure that Corpus is exhausted */
+		$historyItems = $corpusItems;
+
+		$historyMock = $this
+			->getMockBuilder( History::class )
+			->disableOriginalConstructor()
+			->setMethods( ['getAllDomainItems','hasDomain', 'removeDomain'] )
+			->getMock();
+		$historyMock
+			->method( 'hasDomain' )
+			->willReturn( true );
+		$historyMock
+			->method( 'getAllDomainItems' )
+			->willReturn( $historyItems );
+
+		$this->assertTrue( $corpus->isExhausted( $historyMock ) );
+
+		$historyMock
+			->expects( $this->once() )
+			->method( 'removeDomain' );
+
+		$corpus->getRandomItem( $historyMock );
+	}
+
+	public function test_isExhausted_callsHistory_hasDomain()
+	{
+		$corpusName = 'name-' . microtime( true );
+		$corpus = new Corpus( $corpusName, ['aioli', 'ajvar', 'amba'] );
+
+		/* Corpus::isExhausted should call History::hasDomain */
+		$historyMock = $this
+			->getMockBuilder( History::class )
+			->disableOriginalConstructor()
+			->setMethods( ['hasDomain'] )
+			->getMock();
+		$historyMock
+			->expects( $this->once() )
+			->method( 'hasDomain' )
+			->with( $corpusName );
+
+		/* If the Corpus domain is not present in History, the Corpus is not
+		   exhausted. */
+		$historyMock
+			->method( 'hasDomain' )
+			->willReturn( false );
+
+		$isExhausted = $corpus->isExhausted( $historyMock );
+
+		$this->assertFalse( $isExhausted );
+	}
+
+	public function provider_isExhausted_diffsCorpusAndHistoryItems() : array
+	{
+		$corpusItems = ['aioli', 'ajvar', 'amba'];
+		return [
+			[$corpusItems, [], false],
+			[$corpusItems, ['aioli'], false],
+			[$corpusItems, ['chutney','guacamole','ketchup'], false],
+
+			[$corpusItems, ['aioli', 'amba', 'ajvar'], true],
+			[$corpusItems, ['aioli', 'ajvar', 'amba'], true],
+			[$corpusItems, ['aioli', 'ajvar', 'amba', 'ketchup'], true],
+		];
+	}
+
+	/**
+	 * @dataProvider	provider_isExhausted_diffsCorpusAndHistoryItems
+	 */
+	public function test_isExhausted_diffsCorpusAndHistoryItems( array $corpusItems, array $historyItems, bool $shouldBeExhausted )
+	{
+		$corpusName = 'name-' . microtime( true );
+		$corpus = new Corpus( $corpusName, $corpusItems );
+
+		/* Corpus::isExhausted should call History::getAllDomainItems */
+		$historyMock = $this
+			->getMockBuilder( History::class )
+			->disableOriginalConstructor()
+			->setMethods( ['getAllDomainItems','hasDomain'] )
+			->getMock();
+		$historyMock
+			->method( 'hasDomain' )
+			->willReturn( true );
+		$historyMock
+			->method( 'getAllDomainItems' )
+			->willReturn( $historyItems );
+		$historyMock
+			->expects( $this->once() )
+			->method( 'getAllDomainItems' )
+			->with( $corpusName );
+
+		$isExhausted = $corpus->isExhausted( $historyMock );
+
+		$this->assertEquals( $shouldBeExhausted, $isExhausted );
 	}
 }

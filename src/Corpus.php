@@ -99,13 +99,64 @@ class Corpus
 	}
 
 	/**
-	 * Returns a random corpus item
+	 * Returns a random corpus item not present in History
+	 *
+	 * If Corpus is exhausted, resets History domain first.
+	 *
+	 * @param	Corpus\History	$history
 	 *
 	 * @return	mixed
 	 */
-	public function getRandomItem()
+	public function getRandomItem( History &$history )
 	{
-		$index = array_rand( $this->items );
-		return $this->items[$index];
+		$historyDomain = $this->getName();
+
+		if( $this->isExhausted( $history ) )
+		{
+			$history->removeDomain( $historyDomain );
+		}
+
+		$corpusItems = $this->items;
+		shuffle( $corpusItems );
+
+		foreach( $corpusItems as $corpusItem )
+		{
+			if( !$history->hasDomainItem( $historyDomain, $corpusItem ) )
+			{
+				break;
+			}
+		}
+
+		$history->addDomainItem( $historyDomain, $corpusItem );
+
+		return $corpusItem;
+	}
+
+	/**
+	 * Returns whether all Corpus items appear in given History object
+	 *
+	 * @param	Corpus\History	$history
+	 *
+	 * @return	bool
+	 */
+	public function isExhausted( History $history ) : bool
+	{
+		$historyDomain = $this->getName();
+
+		if( !$history->hasDomain( $historyDomain ) )
+		{
+			return false;
+		}
+
+		$corpusItems = $this->getAllItems();
+		$historyItems = $history->getAllDomainItems( $historyDomain );
+
+		$diffItems = array_diff( $corpusItems, $historyItems );
+
+		/* If all items in $corpusItems are present in $historyItems, the Corpus
+		   is exhausted. */
+		$isExhausted = count( $diffItems ) == 0;
+
+		return $isExhausted;
 	}
 }
