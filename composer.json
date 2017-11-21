@@ -1,0 +1,24 @@
+{
+    "name": "ashur/corpus-php",
+    "type": "project",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/cranberry/filesystem"
+        }
+    ],
+    "authors": [
+        {
+            "name": "Ashur Cabrera",
+            "email": "hello@cabreramade.co"
+        }
+    ],
+    "require": {
+        "cranberry/filesystem": "dev-develop"
+    },
+    "autoload": {
+        "psr-4": {
+            "Corpus\\": "src/"
+        }
+    }
+}

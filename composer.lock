@@ -1,0 +1,60 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "d64de78db2d50a70412d127a7bdfb577",
+    "packages": [
+        {
+            "name": "cranberry/filesystem",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cranberry/filesystem.git",
+                "reference": "e9113ec5fc99adea111549b9e8d396be8be62ffa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cranberry/filesystem/zipball/e9113ec5fc99adea111549b9e8d396be8be62ffa",
+                "reference": "e9113ec5fc99adea111549b9e8d396be8be62ffa",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cranberry\\Filesystem\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ashur Cabrera",
+                    "email": "hello@cabreramade.co"
+                }
+            ],
+            "description": "A small filesystem library.",
+            "homepage": "https://github.com/cranberry/filesystem",
+            "support": {
+                "source": "https://github.com/cranberry/filesystem/tree/develop",
+                "issues": "https://github.com/cranberry/filesystem/issues"
+            },
+            "time": "2017-11-15T20:31:30+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "cranberry/filesystem": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
