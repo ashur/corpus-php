@@ -137,7 +137,7 @@ class HistoryTest extends TestCase
 		$history->addDomainItem( $domainName, 'item-' . microtime( true ) );
 		$this->assertTrue( $history->hasDomain( $domainName ) );
 
-		$history->removeDomain( 'domain-' . microtime( true ) );
+		$history->removeDomain( $domainName );
 		$this->assertFalse( $history->hasDomain( $domainName ) );
 	}
 
