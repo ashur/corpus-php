@@ -214,6 +214,12 @@ class CorpusTest extends TestCase
 			[$corpusItems, ['aioli', 'amba', 'ajvar'], true],
 			[$corpusItems, ['aioli', 'ajvar', 'amba'], true],
 			[$corpusItems, ['aioli', 'ajvar', 'amba', 'ketchup'], true],
+
+			[
+				[['aioli' => true], ['ajvar' => true], ['amba' => true]],		// Non-scalar values
+				[['aioli' => true], ['ajvar' => true], ['amba' => true]],
+				true
+			],
 		];
 	}
 

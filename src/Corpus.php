@@ -149,7 +149,16 @@ class Corpus
 		}
 
 		$corpusItems = $this->getAllItems();
+		foreach( $corpusItems as &$corpusItem )
+		{
+			$corpusItem = serialize( $corpusItem );
+		}
+
 		$historyItems = $history->getAllDomainItems( $historyDomain );
+		foreach( $historyItems as &$historyItem )
+		{
+			$historyItem = serialize( $historyItem );
+		}
 
 		$diffItems = array_diff( $corpusItems, $historyItems );
 
