@@ -29,11 +29,11 @@ class History
 	 *
 	 * @param	string	$domainName
 	 *
-	 * @param	string	$itemValue
+	 * @param	mixed	$itemValue
 	 *
 	 * @return	void
 	 */
-	public function addDomainItem( string $domainName, string $itemValue )
+	public function addDomainItem( string $domainName, $itemValue )
 	{
 		if( !$this->hasDomainItem( $domainName, $itemValue ) )
 		{
@@ -96,11 +96,11 @@ class History
 	 *
 	 * @param	string	$domainName
 	 *
-	 * @param	string	$value
+	 * @param	mixed	$value
 	 *
 	 * @return	bool
 	 */
-	public function hasDomainItem( string $domainName, string $value )
+	public function hasDomainItem( string $domainName, $value )
 	{
 		try
 		{
@@ -123,7 +123,7 @@ class History
 	 *
 	 * @return	void
 	 */
-	public function removeDomain( $domainName )
+	public function removeDomain( string $domainName )
 	{
 		if( !$this->hasDomain( $domainName ) )
 		{

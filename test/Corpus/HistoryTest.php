@@ -15,7 +15,8 @@ class HistoryTest extends TestCase
 	public function domainItemProvider() : array
 	{
 		return [
-			['domain-' . microtime( true ), 'value-' . microtime( true )]
+			['domain-' . microtime( true ), 'value-' . microtime( true )],
+			['domain-' . microtime( true ), ['foo' => 'bar-' . microtime( true ), 'boo' => 'far-' . microtime( true )]],	// non-scalar values
 		];
 	}
 
@@ -32,11 +33,11 @@ class HistoryTest extends TestCase
 		$this->assertTrue( $history->hasDomainItem( $domainName, $domainItem ) );
 	}
 
-	public function test_createFromJSONEncodedFile()
+	/**
+	 * @dataProvider	domainItemProvider
+	 */
+	public function test_createFromJSONEncodedFile( $domainName, $domainItem )
 	{
-		$domainName = 'domain-' . microtime( true );
-		$domainItem = 'item-' . microtime( true );
-
 		$data = [ $domainName => [$domainItem] ];
 		$json = json_encode( $data );
 
