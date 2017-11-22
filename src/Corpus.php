@@ -20,6 +20,11 @@ class Corpus
 	protected $name;
 
 	/**
+	 * @var	string
+	 */
+	protected $itemSelector;
+
+	/**
 	 * @param	string	$name
 	 *
 	 * @param	array	$items
@@ -129,7 +134,26 @@ class Corpus
 
 		$history->addDomainItem( $historyDomain, $corpusItem );
 
-		return $corpusItem;
+		if( $this->itemSelector == null )
+		{
+			$result = $corpusItem;
+		}
+		else
+		{
+			if( !is_array( $corpusItem ) )
+			{
+				throw new \Exception( "Cannot apply selector '{$this->itemSelector}' to scalar value '{$corpusItem}'" );
+			}
+
+			if( !array_key_exists( $this->itemSelector, $corpusItem ) )
+			{
+				throw new \Exception( "Invalid selector '{$this->itemSelector}': Not found." );
+			}
+
+			$result = $corpusItem[$this->itemSelector];
+		}
+
+		return $result;
 	}
 
 	/**
@@ -167,5 +191,17 @@ class Corpus
 		$isExhausted = count( $diffItems ) == 0;
 
 		return $isExhausted;
+	}
+
+	/**
+	 * Sets optional selector used in getRandomItem
+	 *
+	 * @param	string	$itemSelector
+	 *
+	 * @return	void
+	 */
+	public function setItemSelector( string $itemSelector )
+	{
+		$this->itemSelector = $itemSelector;
 	}
 }

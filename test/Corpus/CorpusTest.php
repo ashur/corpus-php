@@ -252,4 +252,52 @@ class CorpusTest extends TestCase
 
 		$this->assertEquals( $shouldBeExhausted, $isExhausted );
 	}
+
+	/**
+	 * @expectedException	Exception
+	 */
+	public function test_setItemSelector_usingSelectorWithScalarValue_throwsException()
+	{
+		$corpusName = 'name-' . microtime( true );
+		$corpus = new Corpus( $corpusName, ['apple', 'banana'] );
+
+		$history = new History();
+
+		$corpus->setItemSelector( 'selector-' . microtime( true ) );
+
+		$corpus->getRandomItem( $history );
+	}
+
+	/**
+	 * @expectedException	Exception
+	 */
+	public function test_setItemSelector_usingUndefinedSelector_throwsException()
+	{
+		$corpusName = 'name-' . microtime( true );
+		$corpus = new Corpus( $corpusName, [
+			['present' => 'eat', 'past' => 'ate'],
+		] );
+
+		$history = new History();
+
+		$corpus->setItemSelector( 'selector-' . microtime( true ) );
+
+		$corpus->getRandomItem( $history );
+	}
+
+	public function test_setItemSelector()
+	{
+		$corpusName = 'name-' . microtime( true );
+		$corpus = new Corpus( $corpusName, [
+			['present' => 'eat', 'past' => 'ate'],
+			['present' => 'write', 'past' => 'wrote'],
+		] );
+
+		$historyItems = [['present' => 'write', 'past' => 'wrote']];
+		$history = new History( [$corpusName => $historyItems] );
+
+		$corpus->setItemSelector( 'past' );
+
+		$this->assertEquals( 'ate', $corpus->getRandomItem( $history ) );
+	}
 }
